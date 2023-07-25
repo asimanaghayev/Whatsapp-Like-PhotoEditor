@@ -8,13 +8,14 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import droidninja.filepicker.FilePickerConst;
 import droidninja.filepicker.PickerManager;
 import droidninja.filepicker.R;
 import droidninja.filepicker.adapters.SectionsPagerAdapter;
 
 
-public class MediaPickerFragment extends BaseFragment{
+public class MediaPickerFragment extends BaseFragment {
 
     TabLayout tabLayout;
 
@@ -53,7 +54,7 @@ public class MediaPickerFragment extends BaseFragment{
 
     public static MediaPickerFragment newInstance() {
         MediaPickerFragment photoPickerFragment = new MediaPickerFragment();
-        return  photoPickerFragment;
+        return photoPickerFragment;
     }
 
     public interface MediaPickerFragmentListener {
@@ -72,30 +73,27 @@ public class MediaPickerFragment extends BaseFragment{
     }
 
     private void initView(View view) {
-        tabLayout =  view.findViewById(R.id.tabs);
-        viewPager =  view.findViewById(R.id.viewPager);
+        tabLayout = view.findViewById(R.id.tabs);
+        viewPager = view.findViewById(R.id.viewPager);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getChildFragmentManager());
 
-        if(PickerManager.getInstance().showImages()) {
+        if (PickerManager.getInstance().showImages()) {
             if (PickerManager.getInstance().isShowFolderView())
                 adapter.addFragment(MediaFolderPickerFragment.newInstance(FilePickerConst.MEDIA_TYPE_IMAGE), getString(R.string.images));
             else
                 adapter.addFragment(MediaDetailPickerFragment.newInstance(FilePickerConst.MEDIA_TYPE_IMAGE), getString(R.string.images));
-        }
-        else
+        } else
             tabLayout.setVisibility(View.GONE);
 
-        if(PickerManager.getInstance().showVideo())
-        {
-            if(PickerManager.getInstance().isShowFolderView())
+        if (PickerManager.getInstance().showVideo()) {
+            if (PickerManager.getInstance().isShowFolderView())
                 adapter.addFragment(MediaFolderPickerFragment.newInstance(FilePickerConst.MEDIA_TYPE_VIDEO), getString(R.string.videos));
             else
                 adapter.addFragment(MediaDetailPickerFragment.newInstance(FilePickerConst.MEDIA_TYPE_VIDEO), getString(R.string.videos));
-        }
-        else
+        } else
             tabLayout.setVisibility(View.GONE);
 
         viewPager.setAdapter(adapter);

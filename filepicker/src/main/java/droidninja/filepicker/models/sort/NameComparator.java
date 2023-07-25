@@ -10,7 +10,8 @@ import droidninja.filepicker.models.Document;
 
 public class NameComparator implements Comparator<Document> {
 
-    protected NameComparator() { }
+    protected NameComparator() {
+    }
 
     @Override
     public int compare(Document o1, Document o2) {

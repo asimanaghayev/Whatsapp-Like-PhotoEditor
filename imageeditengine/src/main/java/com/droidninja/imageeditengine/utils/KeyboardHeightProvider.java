@@ -11,38 +11,53 @@ import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.WindowManager.LayoutParams;
 import android.widget.PopupWindow;
+
 import com.droidninja.imageeditengine.R;
 
 /**
  * The keyboard height provider, this class uses a PopupWindow
- * to calculate the window height when the floating keyboard is opened and closed. 
+ * to calculate the window height when the floating keyboard is opened and closed.
  */
 public class KeyboardHeightProvider extends PopupWindow {
 
-    /** The tag for logging purposes */
+    /**
+     * The tag for logging purposes
+     */
     private final static String TAG = "sample_KeyboardHeightProvider";
 
-    /** The keyboard height observer */
+    /**
+     * The keyboard height observer
+     */
     private KeyboardHeightObserver observer;
 
-    /** The cached landscape height of the keyboard */
+    /**
+     * The cached landscape height of the keyboard
+     */
     private int keyboardLandscapeHeight;
 
-    /** The cached portrait height of the keyboard */
+    /**
+     * The cached portrait height of the keyboard
+     */
     private int keyboardPortraitHeight;
 
-    /** The view that is used to calculate the keyboard height */
-    private View popupView;
+    /**
+     * The view that is used to calculate the keyboard height
+     */
+    private final View popupView;
 
-    /** The parent view */
-    private View parentView;
+    /**
+     * The parent view
+     */
+    private final View parentView;
 
-    /** The root activity that uses this KeyboardHeightProvider */
-    private Activity activity;
+    /**
+     * The root activity that uses this KeyboardHeightProvider
+     */
+    private final Activity activity;
 
-    /** 
+    /**
      * Construct a new KeyboardHeightProvider
-     * 
+     *
      * @param activity The parent activity
      */
     public KeyboardHeightProvider(Activity activity) {
@@ -63,13 +78,13 @@ public class KeyboardHeightProvider extends PopupWindow {
 
         popupView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
 
-                @Override
-                public void onGlobalLayout() {
-                    if (popupView != null) {
-                        handleOnGlobalLayout();
-                    }
+            @Override
+            public void onGlobalLayout() {
+                if (popupView != null) {
+                    handleOnGlobalLayout();
                 }
-            });
+            }
+        });
     }
 
     /**
@@ -86,7 +101,7 @@ public class KeyboardHeightProvider extends PopupWindow {
     }
 
     /**
-     * Close the keyboard height provider, 
+     * Close the keyboard height provider,
      * this provider will not be used anymore.
      */
     public void close() {
@@ -94,11 +109,11 @@ public class KeyboardHeightProvider extends PopupWindow {
         dismiss();
     }
 
-    /** 
-     * Set the keyboard height observer to this provider. The 
-     * observer will be notified when the keyboard height has changed. 
+    /**
+     * Set the keyboard height observer to this provider. The
+     * observer will be notified when the keyboard height has changed.
      * For example when the keyboard is opened or closed.
-     * 
+     *
      * @param observer The observer to be added to this provider.
      */
     public void setKeyboardHeightObserver(KeyboardHeightObserver observer) {
@@ -115,9 +130,9 @@ public class KeyboardHeightProvider extends PopupWindow {
     }
 
     /**
-     * Popup window itself is as big as the window of the Activity. 
-     * The keyboard can then be calculated by extracting the popup view bottom 
-     * from the activity window height. 
+     * Popup window itself is as big as the window of the Activity.
+     * The keyboard can then be calculated by extracting the popup view bottom
+     * from the activity window height.
      */
     private void handleOnGlobalLayout() {
 
@@ -135,13 +150,11 @@ public class KeyboardHeightProvider extends PopupWindow {
 
         if (keyboardHeight == 0) {
             notifyKeyboardHeightChanged(0, orientation);
-        }
-        else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            this.keyboardPortraitHeight = keyboardHeight; 
+        } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            this.keyboardPortraitHeight = keyboardHeight;
             notifyKeyboardHeightChanged(keyboardPortraitHeight, orientation);
-        } 
-        else {
-            this.keyboardLandscapeHeight = keyboardHeight; 
+        } else {
+            this.keyboardLandscapeHeight = keyboardHeight;
             notifyKeyboardHeightChanged(keyboardLandscapeHeight, orientation);
         }
     }

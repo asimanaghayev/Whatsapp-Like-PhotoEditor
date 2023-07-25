@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.Log;
+
 import com.droidninja.imageeditengine.Constants;
 import com.droidninja.imageeditengine.model.ImageFilter;
 
@@ -67,7 +68,7 @@ public class PhotoProcessing {
     public static Bitmap combineImages(Bitmap bmp1, Bitmap bmp2, int alpha) {
         Bitmap bmOverlay = Bitmap.createBitmap(bmp1.getWidth(), bmp1.getHeight(), bmp1.getConfig());
         Canvas canvas = new Canvas(bmOverlay);
-        Log.i("hasAlpha",bmp2.hasAlpha()+"");
+        Log.i("hasAlpha", bmp2.hasAlpha() + "");
         canvas.drawBitmap(bmp1, new Matrix(), null);
         Paint alphaPaint = new Paint();
         alphaPaint.setAlpha(alpha);
@@ -127,11 +128,11 @@ public class PhotoProcessing {
 
     public static native void nativeResizeBitmap(int newWidth, int newHeight);
 
-    public static native void handleSmooth(Bitmap bitmap,float smoothValue);
+    public static native void handleSmooth(Bitmap bitmap, float smoothValue);
 
-    public static native void handleWhiteSkin(Bitmap bitmap,float whiteValue);
+    public static native void handleWhiteSkin(Bitmap bitmap, float whiteValue);
 
-    public static native void handleSmoothAndWhiteSkin(Bitmap bitmap,float smoothValue,float whiteValue);
+    public static native void handleSmoothAndWhiteSkin(Bitmap bitmap, float smoothValue, float whiteValue);
 
     public static native void freeBeautifyMatrix();
 
