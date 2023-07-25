@@ -21,123 +21,120 @@ import droidninja.filepicker.R;
 import droidninja.filepicker.models.PhotoDirectory;
 import droidninja.filepicker.utils.AndroidLifecycleUtils;
 
-public class FolderGridAdapter extends SelectableAdapter<FolderGridAdapter.PhotoViewHolder, PhotoDirectory>{
+public class FolderGridAdapter extends SelectableAdapter<FolderGridAdapter.PhotoViewHolder, PhotoDirectory> {
 
-  private final Context context;
-  private final RequestManager glide;
-  private final boolean showCamera;
-  private int imageSize;
+    private final Context context;
+    private final RequestManager glide;
+    private final boolean showCamera;
+    private int imageSize;
 
-  public final static int ITEM_TYPE_CAMERA = 100;
-  public final static int ITEM_TYPE_PHOTO  = 101;
-  private FolderGridAdapterListener folderGridAdapterListener;
+    public final static int ITEM_TYPE_CAMERA = 100;
+    public final static int ITEM_TYPE_PHOTO = 101;
+    private FolderGridAdapterListener folderGridAdapterListener;
 
-  public interface FolderGridAdapterListener{
-      void onCameraClicked();
-      void onFolderClicked(PhotoDirectory photoDirectory);
-  }
+    public interface FolderGridAdapterListener {
+        void onCameraClicked();
 
-  public FolderGridAdapter(Context context, RequestManager requestManager, ArrayList<PhotoDirectory> photos, ArrayList<String> selectedPaths, boolean showCamera)
-  {
-    super(photos, selectedPaths);
-    this.context = context;
-    this.glide = requestManager;
-    this.showCamera = showCamera;
-    setColumnNumber(context,3);
-  }
+        void onFolderClicked(PhotoDirectory photoDirectory);
+    }
 
-  @Override
-  public PhotoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View itemView = LayoutInflater.from(context).inflate(R.layout.item_folder_layout, parent, false);
+    public FolderGridAdapter(Context context, RequestManager requestManager, ArrayList<PhotoDirectory> photos, ArrayList<String> selectedPaths, boolean showCamera) {
+        super(photos, selectedPaths);
+        this.context = context;
+        this.glide = requestManager;
+        this.showCamera = showCamera;
+        setColumnNumber(context, 3);
+    }
 
-    return new PhotoViewHolder(itemView);
-  }
+    @Override
+    public PhotoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(context).inflate(R.layout.item_folder_layout, parent, false);
 
-  @Override
-  public int getItemViewType(int position) {
-    if(showCamera)
-      return (position == 0) ? ITEM_TYPE_CAMERA : ITEM_TYPE_PHOTO;
-    else
-      return ITEM_TYPE_PHOTO;
-  }
+        return new PhotoViewHolder(itemView);
+    }
 
-  @Override
-  public void onBindViewHolder(final PhotoViewHolder holder, int position) {
-    if(getItemViewType(position) == ITEM_TYPE_PHOTO) {
+    @Override
+    public int getItemViewType(int position) {
+        if (showCamera)
+            return (position == 0) ? ITEM_TYPE_CAMERA : ITEM_TYPE_PHOTO;
+        else
+            return ITEM_TYPE_PHOTO;
+    }
 
-      final PhotoDirectory photoDirectory = getItems().get(showCamera?position-1:position);
+    @Override
+    public void onBindViewHolder(final PhotoViewHolder holder, int position) {
+        if (getItemViewType(position) == ITEM_TYPE_PHOTO) {
 
-      if(AndroidLifecycleUtils.canLoadImage(holder.imageView.getContext())) {
-        glide.load(new File(photoDirectory.getCoverPath()))
-                .apply(RequestOptions
-                        .centerCropTransform()
-                        .override(imageSize, imageSize)
-                        .placeholder(R.drawable.image_placeholder))
-                .thumbnail(0.5f)
-                .into(holder.imageView);
-      }
+            final PhotoDirectory photoDirectory = getItems().get(showCamera ? position - 1 : position);
 
-      holder.folderTitle.setText(photoDirectory.getName());
-      holder.folderCount.setText(String.valueOf(photoDirectory.getMedias().size()));
+            if (AndroidLifecycleUtils.canLoadImage(holder.imageView.getContext())) {
+                glide.load(new File(photoDirectory.getCoverPath()))
+                        .apply(RequestOptions
+                                .centerCropTransform()
+                                .override(imageSize, imageSize)
+                                .placeholder(R.drawable.image_placeholder))
+                        .thumbnail(0.5f)
+                        .into(holder.imageView);
+            }
 
-      holder.itemView.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if(folderGridAdapterListener!=null)
-              folderGridAdapterListener.onFolderClicked(photoDirectory);
+            holder.folderTitle.setText(photoDirectory.getName());
+            holder.folderCount.setText(String.valueOf(photoDirectory.getMedias().size()));
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (folderGridAdapterListener != null)
+                        folderGridAdapterListener.onFolderClicked(photoDirectory);
+                }
+            });
+            holder.bottomOverlay.setVisibility(View.VISIBLE);
+        } else {
+            holder.imageView.setImageResource(PickerManager.getInstance().getCameraDrawable());
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (folderGridAdapterListener != null)
+                        folderGridAdapterListener.onCameraClicked();
+                }
+            });
+            holder.bottomOverlay.setVisibility(View.GONE);
         }
-      });
-      holder.bottomOverlay.setVisibility(View.VISIBLE);
     }
-    else
-    {
-      holder.imageView.setImageResource(PickerManager.getInstance().getCameraDrawable());
-      holder.itemView.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-          if(folderGridAdapterListener!=null)
-            folderGridAdapterListener.onCameraClicked();
+
+    private void setColumnNumber(Context context, int columnNum) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics metrics = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(metrics);
+        int widthPixels = metrics.widthPixels;
+        imageSize = widthPixels / columnNum;
+    }
+
+    @Override
+    public int getItemCount() {
+        if (showCamera)
+            return getItems().size() + 1;
+        return getItems().size();
+    }
+
+    public void setFolderGridAdapterListener(FolderGridAdapterListener onClickListener) {
+        this.folderGridAdapterListener = onClickListener;
+    }
+
+    public static class PhotoViewHolder extends RecyclerView.ViewHolder {
+
+        ImageView imageView;
+        TextView folderTitle;
+        TextView folderCount;
+        View bottomOverlay;
+        View selectBg;
+
+        public PhotoViewHolder(View itemView) {
+            super(itemView);
+            imageView = itemView.findViewById(R.id.iv_photo);
+            folderTitle = itemView.findViewById(R.id.folder_title);
+            folderCount = itemView.findViewById(R.id.folder_count);
+            bottomOverlay = itemView.findViewById(R.id.bottomOverlay);
+            selectBg = itemView.findViewById(R.id.transparent_bg);
         }
-      });
-      holder.bottomOverlay.setVisibility(View.GONE);
     }
-  }
-
-  private void setColumnNumber(Context context, int columnNum) {
-    WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-    DisplayMetrics metrics = new DisplayMetrics();
-    wm.getDefaultDisplay().getMetrics(metrics);
-    int widthPixels = metrics.widthPixels;
-    imageSize = widthPixels / columnNum;
-  }
-
-  @Override
-  public int getItemCount() {
-    if(showCamera)
-      return getItems().size()+1;
-    return getItems().size();
-  }
-
-  public void setFolderGridAdapterListener(FolderGridAdapterListener onClickListener)
-  {
-    this.folderGridAdapterListener = onClickListener;
-  }
-
-  public static class PhotoViewHolder extends RecyclerView.ViewHolder {
-
-      ImageView imageView;
-      TextView folderTitle;
-      TextView folderCount;
-      View bottomOverlay;
-      View selectBg;
-
-    public PhotoViewHolder(View itemView) {
-      super(itemView);
-      imageView = (ImageView) itemView.findViewById(R.id.iv_photo);
-      folderTitle = (TextView) itemView.findViewById(R.id.folder_title);
-      folderCount = (TextView) itemView.findViewById(R.id.folder_count);
-      bottomOverlay = itemView.findViewById(R.id.bottomOverlay);
-      selectBg = itemView.findViewById(R.id.transparent_bg);
-    }
-  }
 }

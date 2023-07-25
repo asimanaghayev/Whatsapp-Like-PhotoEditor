@@ -1,5 +1,5 @@
 package droidninja.filepicker.adapters;
 
-public interface FileAdapterListener{
+public interface FileAdapterListener {
     void onItemSelected();
 }

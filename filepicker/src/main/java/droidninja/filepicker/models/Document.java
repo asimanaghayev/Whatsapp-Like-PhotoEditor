@@ -1,8 +1,8 @@
 package droidninja.filepicker.models;
 
-import droidninja.filepicker.FilePickerConst;
-import droidninja.filepicker.utils.FilePickerUtils;
 import java.io.File;
+
+import droidninja.filepicker.utils.FilePickerUtils;
 
 /**
  * Created by droidNinja on 29/07/16.
@@ -13,11 +13,11 @@ public class Document extends BaseFile {
     private FileType fileType;
 
     public Document(int id, String title, String path) {
-        super(id,title,path);
+        super(id, title, path);
     }
 
     public Document() {
-        super(0,null,null);
+        super(0, null, null);
     }
 
     @Override
@@ -75,13 +75,11 @@ public class Document extends BaseFile {
         this.name = title;
     }
 
-    public boolean isThisType(String[] types)
-    {
+    public boolean isThisType(String[] types) {
         return FilePickerUtils.contains(types, this.path);
     }
 
-    public FileType getFileType()
-    {
+    public FileType getFileType() {
         return fileType;
     }
 

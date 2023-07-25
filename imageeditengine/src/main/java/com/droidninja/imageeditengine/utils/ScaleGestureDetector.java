@@ -25,7 +25,7 @@ import android.view.View;
  * using the supplied {@link MotionEvent}s. The {@link OnScaleGestureListener}
  * callback will notify users when a particular gesture event has occurred.
  * This class should only be used with {@link MotionEvent}s reported via touch.
- *
+ * <p>
  * To use this class:
  * <ul>
  *  <li>Create an instance of the {@code ScaleGestureDetector} for your
@@ -40,7 +40,7 @@ class ScaleGestureDetector {
      * If you want to listen for all the different gestures then implement
      * this interface. If you only want to listen for a subset it might
      * be easier to extend {@link SimpleOnScaleGestureListener}.
-     *
+     * <p>
      * An application will receive events in the following order:
      */
     interface OnScaleGestureListener {
@@ -49,13 +49,13 @@ class ScaleGestureDetector {
          * Reported by pointer motion.
          *
          * @param detector The detector reporting the event - use this to
-         *          retrieve extended info about event state.
+         *                 retrieve extended info about event state.
          * @return Whether or not the detector should consider this event
-         *          as handled. If an event was not handled, the detector
-         *          will continue to accumulate movement until an event is
-         *          handled. This can be useful if an application, for example,
-         *          only wants to update scaling factors if the change is
-         *          greater than 0.01.
+         * as handled. If an event was not handled, the detector
+         * will continue to accumulate movement until an event is
+         * handled. This can be useful if an application, for example,
+         * only wants to update scaling factors if the change is
+         * greater than 0.01.
          */
         boolean onScale(View view, ScaleGestureDetector detector);
 
@@ -64,25 +64,25 @@ class ScaleGestureDetector {
          * new pointers going down.
          *
          * @param detector The detector reporting the event - use this to
-         *          retrieve extended info about event state.
+         *                 retrieve extended info about event state.
          * @return Whether or not the detector should continue recognizing
-         *          this gesture. For example, if a gesture is beginning
-         *          with a focal point outside of a region where it makes
-         *          sense, onScaleBegin() may return false to ignore the
-         *          rest of the gesture.
+         * this gesture. For example, if a gesture is beginning
+         * with a focal point outside of a region where it makes
+         * sense, onScaleBegin() may return false to ignore the
+         * rest of the gesture.
          */
         boolean onScaleBegin(View view, ScaleGestureDetector detector);
 
         /**
          * Responds to the end of a scale gesture. Reported by existing
          * pointers going up.
-         *
+         * <p>
          * Once a scale has ended, {@link ScaleGestureDetector#getFocusX()}
          * and {@link ScaleGestureDetector#getFocusY()} will return the location
          * of the pointer remaining on the screen.
          *
          * @param detector The detector reporting the event - use this to
-         *          retrieve extended info about event state.
+         *                 retrieve extended info about event state.
          */
         void onScaleEnd(View view, ScaleGestureDetector detector);
     }
@@ -123,7 +123,7 @@ class ScaleGestureDetector {
     private MotionEvent mPrevEvent;
     private MotionEvent mCurrEvent;
 
-    private Vector2D mCurrSpanVector;
+    private final Vector2D mCurrSpanVector;
     private float mFocusX;
     private float mFocusY;
     private float mPrevFingerDiffX;
@@ -396,6 +396,7 @@ class ScaleGestureDetector {
 
     /**
      * Returns {@code true} if a two-finger scale gesture is in progress.
+     *
      * @return {@code true} if a scale gesture is in progress, {@code false} otherwise.
      */
     boolean isInProgress() {

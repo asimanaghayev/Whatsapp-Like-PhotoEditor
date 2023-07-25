@@ -16,6 +16,21 @@
 
 package com.droidninja.imageeditengine.views.imagezoom.utils;
 
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
+import android.os.Environment;
+import android.util.Log;
+import android.view.Display;
+import android.view.View;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -23,22 +38,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory.Options;
-import android.graphics.drawable.Drawable;
-import android.media.ExifInterface;
-import android.os.Environment;
-import android.util.FloatMath;
-import android.util.Log;
-import android.view.Display;
-import android.view.View;
 
 /**
  * BitmapUtils
@@ -319,54 +318,50 @@ public class BitmapUtils {
     /**
      * Resize a bitmap object to fit the passed width and height
      *
-     * @param input
-     *           The bitmap to be resized
-     * @param destWidth
-     *           Desired maximum width of the result bitmap
-     * @param destHeight
-     *           Desired maximum height of the result bitmap
+     * @param input      The bitmap to be resized
+     * @param destWidth  Desired maximum width of the result bitmap
+     * @param destHeight Desired maximum height of the result bitmap
      * @return A new resized bitmap
-     * @throws OutOfMemoryError
-     *            if the operation exceeds the available vm memory
+     * @throws OutOfMemoryError if the operation exceeds the available vm memory
      */
-    public static Bitmap resizeBitmap( final Bitmap input, int destWidth, int destHeight, int rotation ) throws OutOfMemoryError {
+    public static Bitmap resizeBitmap(final Bitmap input, int destWidth, int destHeight, int rotation) throws OutOfMemoryError {
 
         int dstWidth = destWidth;
         int dstHeight = destHeight;
         final int srcWidth = input.getWidth();
         final int srcHeight = input.getHeight();
 
-        if ( rotation == 90 || rotation == 270 ) {
+        if (rotation == 90 || rotation == 270) {
             dstWidth = destHeight;
             dstHeight = destWidth;
         }
 
         boolean needsResize = false;
         float p;
-        if ( ( srcWidth > dstWidth ) || ( srcHeight > dstHeight ) ) {
+        if ((srcWidth > dstWidth) || (srcHeight > dstHeight)) {
             needsResize = true;
-            if ( ( srcWidth > srcHeight ) && ( srcWidth > dstWidth ) ) {
+            if ((srcWidth > srcHeight) && (srcWidth > dstWidth)) {
                 p = (float) dstWidth / (float) srcWidth;
-                dstHeight = (int) ( srcHeight * p );
+                dstHeight = (int) (srcHeight * p);
             } else {
                 p = (float) dstHeight / (float) srcHeight;
-                dstWidth = (int) ( srcWidth * p );
+                dstWidth = (int) (srcWidth * p);
             }
         } else {
             dstWidth = srcWidth;
             dstHeight = srcHeight;
         }
 
-        if ( needsResize || rotation != 0 ) {
+        if (needsResize || rotation != 0) {
             Bitmap output;
 
-            if ( rotation == 0 ) {
-                output = Bitmap.createScaledBitmap( input, dstWidth, dstHeight, true );
+            if (rotation == 0) {
+                output = Bitmap.createScaledBitmap(input, dstWidth, dstHeight, true);
             } else {
                 Matrix matrix = new Matrix();
-                matrix.postScale( (float) dstWidth / srcWidth, (float) dstHeight / srcHeight );
-                matrix.postRotate( rotation );
-                output = Bitmap.createBitmap( input, 0, 0, srcWidth, srcHeight, matrix, true );
+                matrix.postScale((float) dstWidth / srcWidth, (float) dstHeight / srcHeight);
+                matrix.postRotate(rotation);
+                output = Bitmap.createBitmap(input, 0, 0, srcWidth, srcHeight, matrix, true);
             }
             return output;
         } else
@@ -383,8 +378,8 @@ public class BitmapUtils {
      * @return
      * @throws OutOfMemoryError
      */
-    public static Bitmap resizeBitmap( final Bitmap input, int destWidth, int destHeight ) throws OutOfMemoryError {
-        return resizeBitmap( input, destWidth, destHeight, 0 );
+    public static Bitmap resizeBitmap(final Bitmap input, int destWidth, int destHeight) throws OutOfMemoryError {
+        return resizeBitmap(input, destWidth, destHeight, 0);
     }
 
     public static Bitmap getSampledBitmap(String filePath, int reqWidth, int reqHeight) {

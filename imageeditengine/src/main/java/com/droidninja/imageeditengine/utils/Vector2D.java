@@ -2,7 +2,7 @@ package com.droidninja.imageeditengine.utils;
 
 import android.graphics.PointF;
 
- class Vector2D extends PointF {
+class Vector2D extends PointF {
 
     public Vector2D() {
         super();
