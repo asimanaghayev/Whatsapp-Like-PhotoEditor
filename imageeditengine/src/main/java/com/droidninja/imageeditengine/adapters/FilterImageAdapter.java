@@ -96,22 +96,19 @@ public class FilterImageAdapter extends RecyclerView.Adapter<FilterImageAdapter.
         holder.filterIV.setLayoutParams(layoutParams);
 
         holder.filterTv.setText(imageFilter.filterName);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mListener.onFilterSelected(imageFilter);
-                int lastPosition = lastCheckedPostion;
-                holder.checkbox.setVisibility(View.VISIBLE);
+        holder.itemView.setOnClickListener(view -> {
+            mListener.onFilterSelected(imageFilter);
+            int lastPosition = lastCheckedPostion;
+            holder.checkbox.setVisibility(View.VISIBLE);
 
-                FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(Utility.dpToPx(holder.checkbox.getContext(), 70),
-                        Utility.dpToPx(holder.checkbox.getContext(), 110));
-                //layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-                holder.filterIV.setLayoutParams(layoutParams);
+            FrameLayout.LayoutParams layoutParams1 = new FrameLayout.LayoutParams(Utility.dpToPx(holder.checkbox.getContext(), 70),
+                    Utility.dpToPx(holder.checkbox.getContext(), 110));
+            //layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+            holder.filterIV.setLayoutParams(layoutParams1);
 
 
-                lastCheckedPostion = holder.getAdapterPosition();
-                notifyItemChanged(lastPosition);
-            }
+            lastCheckedPostion = holder.getAdapterPosition();
+            notifyItemChanged(lastPosition);
         });
     }
 

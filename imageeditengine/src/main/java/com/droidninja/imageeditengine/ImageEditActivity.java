@@ -32,13 +32,12 @@ public class ImageEditActivity extends BaseImageEditActivity
 
     @Override
     public void onCropClicked(Bitmap bitmap) {
-        FragmentUtil.replaceFragment(this, R.id.fragment_container,
+        FragmentUtil.addFragment(this, R.id.fragment_container,
                 CropFragment.newInstance(bitmap, cropRect));
     }
 
     @Override
     public void onDoneClicked(String imagePath) {
-
         Intent intent = new Intent();
         intent.putExtra(ImageEditor.EXTRA_EDITED_PATH, imagePath);
         setResult(Activity.RESULT_OK, intent);
@@ -54,15 +53,16 @@ public class ImageEditActivity extends BaseImageEditActivity
         if (photoEditorFragment != null) {
             photoEditorFragment.setImageWithRect(cropRect);
             photoEditorFragment.reset();
-            FragmentUtil.removeFragment(this,
-                    (BaseFragment) FragmentUtil.getFragmentByTag(this, CropFragment.class.getSimpleName()));
+            onCancelCrop();
         }
     }
 
     @Override
     public void onCancelCrop() {
-        FragmentUtil.removeFragment(this,
-                (BaseFragment) FragmentUtil.getFragmentByTag(this, CropFragment.class.getSimpleName()));
+        FragmentUtil.removeFragment(
+                this,
+                CropFragment.class.getSimpleName()
+        );
     }
 
     @Override

@@ -4,6 +4,14 @@
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
+/.idea/sonarlint
+/.idea/gradle.xml
+/.idea/misc.xml
+/.idea/vcs.xml
+/.idea/kotlinc.xml
+.idea/codeStyles
+.idea/checkstyle-idea.xml
+.idea/compiler.xml
 .DS_Store
 /build
 /captures

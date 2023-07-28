@@ -172,4 +172,4 @@ public class CustomPaintView extends View {
     public void setBounds(RectF bitmapRect) {
         this.bounds = bitmapRect;
     }
-}//end class
+}
