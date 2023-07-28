@@ -29,7 +29,7 @@ public class FilterImageAdapter extends RecyclerView.Adapter<FilterImageAdapter.
         void onFilterSelected(ImageFilter imageFilter);
     }
 
-    public FilterImageAdapter(ArrayList<ImageFilter> list, FilterImageAdapterListener listener) {
+    public FilterImageAdapter(List<ImageFilter> list, FilterImageAdapterListener listener) {
         imageFilters = list;
         this.mListener = listener;
     }

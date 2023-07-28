@@ -57,7 +57,7 @@ public class CropFragment extends BaseFragment implements View.OnClickListener {
     }
 
     public interface OnFragmentInteractionListener {
-        void onImageCropped(Bitmap bitmap, Rect cropRect);
+        void onImageCropped(Bitmap bitmap, Rect cropRect, int rotateDegree);
 
         void onCancelCrop();
     }
@@ -89,7 +89,11 @@ public class CropFragment extends BaseFragment implements View.OnClickListener {
         } else if (view.getId() == R.id.cancel_tv || view.getId() == R.id.back_iv) {
             mListener.onCancelCrop();
         } else if (view.getId() == R.id.done_tv) {
-            mListener.onImageCropped(cropImageView.getCroppedImage(), cropImageView.getCropRect());
+            mListener.onImageCropped(
+                    cropImageView.getCroppedImage(),
+                    cropImageView.getCropRect(),
+                    cropImageView.getRotatedDegrees()
+            );
         }
     }
 }

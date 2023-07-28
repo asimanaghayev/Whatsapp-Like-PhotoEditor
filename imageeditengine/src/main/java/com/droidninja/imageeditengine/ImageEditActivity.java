@@ -45,13 +45,13 @@ public class ImageEditActivity extends BaseImageEditActivity
     }
 
     @Override
-    public void onImageCropped(Bitmap bitmap, Rect cropRect) {
+    public void onImageCropped(Bitmap bitmap, Rect cropRect, int rotateDegree) {
         this.cropRect = cropRect;
         PhotoEditorFragment photoEditorFragment =
                 (PhotoEditorFragment) FragmentUtil.getFragmentByTag(this,
                         PhotoEditorFragment.class.getSimpleName());
         if (photoEditorFragment != null) {
-            photoEditorFragment.setImageWithRect(cropRect);
+            photoEditorFragment.setImageWithRect(cropRect, rotateDegree);
             photoEditorFragment.reset();
             onCancelCrop();
         }

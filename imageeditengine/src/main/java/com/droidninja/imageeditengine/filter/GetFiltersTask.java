@@ -7,13 +7,13 @@ import com.droidninja.imageeditengine.model.ImageFilter;
 import com.droidninja.imageeditengine.utils.FilterHelper;
 import com.droidninja.imageeditengine.utils.TaskCallback;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public final class GetFiltersTask extends AsyncTask<Void, Void, ArrayList<ImageFilter>> {
-    private final TaskCallback<ArrayList<ImageFilter>> listenerRef;
+public final class GetFiltersTask extends AsyncTask<Void, Void, List<ImageFilter>> {
+    private final TaskCallback<List<ImageFilter>> listenerRef;
     private final Bitmap srcBitmap;
 
-    public GetFiltersTask(TaskCallback<ArrayList<ImageFilter>> taskCallbackWeakReference, Bitmap srcBitmap) {
+    public GetFiltersTask(TaskCallback<List<ImageFilter>> taskCallbackWeakReference, Bitmap srcBitmap) {
         this.srcBitmap = srcBitmap;
         this.listenerRef = taskCallbackWeakReference;
     }
@@ -24,7 +24,7 @@ public final class GetFiltersTask extends AsyncTask<Void, Void, ArrayList<ImageF
     }
 
     @Override
-    protected void onPostExecute(ArrayList<ImageFilter> result) {
+    protected void onPostExecute(List<ImageFilter> result) {
         super.onPostExecute(result);
         if (listenerRef != null) {
             listenerRef.onTaskDone(result);
@@ -32,9 +32,9 @@ public final class GetFiltersTask extends AsyncTask<Void, Void, ArrayList<ImageF
     }
 
     @Override
-    protected ArrayList<ImageFilter> doInBackground(Void... params) {
+    protected List<ImageFilter> doInBackground(Void... params) {
         FilterHelper filterHelper = new FilterHelper();
-        ArrayList<ImageFilter> filters = filterHelper.getFilters();
+        List<ImageFilter> filters = filterHelper.getFilters();
         for (int index = 0; index < filters.size(); index++) {
             ImageFilter imageFilter = filters.get(index);
             imageFilter.filterImage = PhotoProcessing.filterPhoto(getScaledBitmap(srcBitmap), imageFilter);
