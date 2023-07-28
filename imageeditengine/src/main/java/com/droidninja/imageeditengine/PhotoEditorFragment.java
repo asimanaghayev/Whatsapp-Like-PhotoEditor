@@ -30,6 +30,7 @@ import com.droidninja.imageeditengine.filter.ProcessingImage;
 import com.droidninja.imageeditengine.model.ImageFilter;
 import com.droidninja.imageeditengine.utils.FilterHelper;
 import com.droidninja.imageeditengine.utils.FilterTouchListener;
+import com.droidninja.imageeditengine.utils.ImageUtils;
 import com.droidninja.imageeditengine.utils.Matrix3;
 import com.droidninja.imageeditengine.utils.Utility;
 import com.droidninja.imageeditengine.views.PhotoEditorView;
@@ -65,7 +66,7 @@ public class PhotoEditorFragment extends BaseFragment
     public static final int MODE_STICKER = 3;
 
     protected int currentMode;
-    private ImageFilter selectedFilter;
+    private ImageFilter selectedFilter = FilterHelper.getOriginalFilter();
     private Bitmap originalBitmap;
 
     public static PhotoEditorFragment newInstance(String imagePath) {
@@ -116,8 +117,16 @@ public class PhotoEditorFragment extends BaseFragment
         mainImageView.post(() -> photoEditorView.setBounds(mainImageView.getBitmapRect()));
     }
 
-    public void setImageWithRect(Rect rect) {
-        mainBitmap = getScaledBitmap(getCroppedBitmap(getBitmapCache(originalBitmap), rect));
+    public void setImageWithRect(Rect rect, int rotateDegree) {
+        mainBitmap = getScaledBitmap(
+                ImageUtils.rotateImage(
+                        getCroppedBitmap(
+                                getBitmapCache(originalBitmap),
+                                rect
+                        ),
+                        rotateDegree
+                )
+        );
         mainImageView.setImageBitmap(mainBitmap);
         mainImageView.post(() -> photoEditorView.setBounds(mainImageView.getBitmapRect()));
         onFilterSelected(selectedFilter);
