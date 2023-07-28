@@ -35,7 +35,7 @@ public class ImageEditor {
         private boolean enabledEditorText = true;
         private boolean enabledEditorPaint = true;
         private boolean enabledEditorSticker = false;
-        private boolean enableEditorCrop = false;
+        private boolean enableEditorCrop = true;
         private boolean enableFilters = true;
 
         public Builder(Activity context, String imagePath) {

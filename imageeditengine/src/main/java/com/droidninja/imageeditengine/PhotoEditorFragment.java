@@ -31,14 +31,11 @@ import com.droidninja.imageeditengine.model.ImageFilter;
 import com.droidninja.imageeditengine.utils.FilterHelper;
 import com.droidninja.imageeditengine.utils.FilterTouchListener;
 import com.droidninja.imageeditengine.utils.Matrix3;
-import com.droidninja.imageeditengine.utils.TaskCallback;
 import com.droidninja.imageeditengine.utils.Utility;
 import com.droidninja.imageeditengine.views.PhotoEditorView;
 import com.droidninja.imageeditengine.views.VerticalSlideColorPicker;
 import com.droidninja.imageeditengine.views.ViewTouchListener;
 import com.droidninja.imageeditengine.views.imagezoom.ImageViewTouch;
-
-import java.util.ArrayList;
 
 public class PhotoEditorFragment extends BaseFragment
         implements View.OnClickListener, ViewTouchListener,
@@ -116,32 +113,20 @@ public class PhotoEditorFragment extends BaseFragment
 
     public void setImageBitmap(Bitmap bitmap) {
         mainImageView.setImageBitmap(bitmap);
-        mainImageView.post(new Runnable() {
-            @Override
-            public void run() {
-                photoEditorView.setBounds(mainImageView.getBitmapRect());
-            }
-        });
+        mainImageView.post(() -> photoEditorView.setBounds(mainImageView.getBitmapRect()));
     }
 
     public void setImageWithRect(Rect rect) {
         mainBitmap = getScaledBitmap(getCroppedBitmap(getBitmapCache(originalBitmap), rect));
         mainImageView.setImageBitmap(mainBitmap);
-        mainImageView.post(new Runnable() {
-            @Override
-            public void run() {
-                photoEditorView.setBounds(mainImageView.getBitmapRect());
-            }
-        });
+        mainImageView.post(() -> photoEditorView.setBounds(mainImageView.getBitmapRect()));
+        onFilterSelected(selectedFilter);
 
-        new GetFiltersTask(new TaskCallback<ArrayList<ImageFilter>>() {
-            @Override
-            public void onTaskDone(ArrayList<ImageFilter> data) {
-                FilterImageAdapter filterImageAdapter = (FilterImageAdapter) filterRecylerview.getAdapter();
-                if (filterImageAdapter != null) {
-                    filterImageAdapter.setData(data);
-                    filterImageAdapter.notifyDataSetChanged();
-                }
+        new GetFiltersTask(data -> {
+            FilterImageAdapter filterImageAdapter = (FilterImageAdapter) filterRecylerview.getAdapter();
+            if (filterImageAdapter != null) {
+                filterImageAdapter.setData(data);
+                filterImageAdapter.notifyDataSetChanged();
             }
         }, mainBitmap).execute();
     }
@@ -150,8 +135,7 @@ public class PhotoEditorFragment extends BaseFragment
         int currentBitmapWidth = resource.getWidth();
         int currentBitmapHeight = resource.getHeight();
         int ivWidth = mainImageView.getWidth();
-        int newHeight = (int) Math.floor(
-                (double) currentBitmapHeight * ((double) ivWidth / (double) currentBitmapWidth));
+        int newHeight = (int) Math.floor(currentBitmapHeight * ((double) ivWidth / (double) currentBitmapWidth));
         return Bitmap.createScaledBitmap(resource, ivWidth, newHeight, true);
     }
 
@@ -199,20 +183,16 @@ public class PhotoEditorFragment extends BaseFragment
                     int currentBitmapWidth = resource.getWidth();
                     int currentBitmapHeight = resource.getHeight();
                     int ivWidth = mainImageView.getWidth();
-                    int newHeight = (int) Math.floor(
-                            (double) currentBitmapHeight * ((double) ivWidth / (double) currentBitmapWidth));
+                    int newHeight = (int) Math.floor(currentBitmapHeight * ((double) ivWidth / (double) currentBitmapWidth));
                     originalBitmap = Bitmap.createScaledBitmap(resource, ivWidth, newHeight, true);
                     mainBitmap = originalBitmap;
                     setImageBitmap(mainBitmap);
 
-                    new GetFiltersTask(new TaskCallback<ArrayList<ImageFilter>>() {
-                        @Override
-                        public void onTaskDone(ArrayList<ImageFilter> data) {
-                            FilterImageAdapter filterImageAdapter = (FilterImageAdapter) filterRecylerview.getAdapter();
-                            if (filterImageAdapter != null) {
-                                filterImageAdapter.setData(data);
-                                filterImageAdapter.notifyDataSetChanged();
-                            }
+                    new GetFiltersTask(data -> {
+                        FilterImageAdapter filterImageAdapter = (FilterImageAdapter) filterRecylerview.getAdapter();
+                        if (filterImageAdapter != null) {
+                            filterImageAdapter.setData(data);
+                            filterImageAdapter.notifyDataSetChanged();
                         }
                     }, mainBitmap).execute();
                 }
@@ -294,13 +274,10 @@ public class PhotoEditorFragment extends BaseFragment
         int id = view.getId();
         if (id == R.id.crop_btn) {
             if (selectedFilter != null) {
-                new ApplyFilterTask(new TaskCallback<Bitmap>() {
-                    @Override
-                    public void onTaskDone(Bitmap data) {
-                        if (data != null) {
-                            mListener.onCropClicked(getBitmapCache(data));
-                            photoEditorView.hidePaintView();
-                        }
+                new ApplyFilterTask(data -> {
+                    if (data != null) {
+                        mListener.onCropClicked(getBitmapCache(data));
+                        photoEditorView.hidePaintView();
                     }
                 }, Bitmap.createBitmap(originalBitmap)).execute(selectedFilter);
             } else {
@@ -317,28 +294,15 @@ public class PhotoEditorFragment extends BaseFragment
             getActivity().onBackPressed();
         } else if (id == R.id.done_btn) {
             if (selectedFilter != null) {
-                new ApplyFilterTask(new TaskCallback<Bitmap>() {
-                    @Override
-                    public void onTaskDone(Bitmap data) {
-                        if (data != null) {
-                            new ProcessingImage(getBitmapCache(data), Utility.getCacheFilePath(view.getContext()),
-                                    new TaskCallback<String>() {
-                                        @Override
-                                        public void onTaskDone(String data) {
-                                            mListener.onDoneClicked(data);
-                                        }
-                                    }).execute();
-                        }
+                new ApplyFilterTask(data -> {
+                    if (data != null) {
+                        new ProcessingImage(getBitmapCache(data), Utility.getCacheFilePath(view.getContext()),
+                                data1 -> mListener.onDoneClicked(data1)).execute();
                     }
                 }, Bitmap.createBitmap(mainBitmap)).execute(selectedFilter);
             } else {
                 new ProcessingImage(getBitmapCache(mainBitmap), Utility.getCacheFilePath(view.getContext()),
-                        new TaskCallback<String>() {
-                            @Override
-                            public void onTaskDone(String data) {
-                                mListener.onDoneClicked(data);
-                            }
-                        }).execute();
+                        data -> mListener.onDoneClicked(data)).execute();
             }
         }
 
@@ -448,13 +412,12 @@ public class PhotoEditorFragment extends BaseFragment
 
     @Override
     public void onFilterSelected(ImageFilter imageFilter) {
+        if (imageFilter == null) return;
+
         selectedFilter = imageFilter;
-        new ApplyFilterTask(new TaskCallback<Bitmap>() {
-            @Override
-            public void onTaskDone(Bitmap data) {
-                if (data != null) {
-                    setImageBitmap(data);
-                }
+        new ApplyFilterTask(data -> {
+            if (data != null) {
+                setImageBitmap(data);
             }
         }, Bitmap.createBitmap(mainBitmap)).execute(imageFilter);
     }

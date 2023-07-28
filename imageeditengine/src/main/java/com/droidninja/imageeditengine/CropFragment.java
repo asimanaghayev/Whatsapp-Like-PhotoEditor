@@ -12,9 +12,9 @@ import com.droidninja.imageeditengine.views.cropimage.CropImageView;
 
 public class CropFragment extends BaseFragment implements View.OnClickListener {
 
+    private static final int DEFAULT_TURNING_ANGLE = 90;
     private OnFragmentInteractionListener mListener;
     private CropImageView cropImageView;
-    private int currentAngle;
 
     public CropFragment() {
         // Required empty public constructor
@@ -73,7 +73,6 @@ public class CropFragment extends BaseFragment implements View.OnClickListener {
             final Bitmap bitmapimage = getArguments().getParcelable(ImageEditor.EXTRA_ORIGINAL);
             if (bitmapimage != null) {
                 cropImageView.setImageBitmap(bitmapimage);
-                cropImageView.setAspectRatio(1, 1);
                 cropImageView.setGuidelines(CropImageView.Guidelines.ON_TOUCH);
                 final Rect cropRect = getArguments().getParcelable(ImageEditor.EXTRA_CROP_RECT);
                 if (cropRect != null) {
@@ -86,14 +85,11 @@ public class CropFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.rotate_iv) {
-            cropImageView.rotateImage(90);
-        } else if (view.getId() == R.id.cancel_tv) {
+            cropImageView.rotateImage(DEFAULT_TURNING_ANGLE);
+        } else if (view.getId() == R.id.cancel_tv || view.getId() == R.id.back_iv) {
             mListener.onCancelCrop();
         } else if (view.getId() == R.id.done_tv) {
-            final Bitmap original = getArguments().getParcelable(ImageEditor.EXTRA_ORIGINAL);
             mListener.onImageCropped(cropImageView.getCroppedImage(), cropImageView.getCropRect());
-        } else if (view.getId() == R.id.done_tv) {
-            getActivity().onBackPressed();
         }
     }
 }
