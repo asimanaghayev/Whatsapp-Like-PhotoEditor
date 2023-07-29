@@ -14,6 +14,10 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.droidninja.imageeditengine.model.PaintPath;
+
+import java.util.ArrayList;
+
 /**
  * Created by panyi on 17/2/11.
  */
@@ -25,12 +29,14 @@ public class CustomPaintView extends View {
 
     private Canvas mPaintCanvas = null;
 
-    private float last_x;
-    private float last_y;
+    private float lastX;
+    private float lastY;
     private boolean eraser;
 
     private int mColor;
     private RectF bounds;
+
+    private ArrayList<PaintPath> paths = new ArrayList<>();
 
     public CustomPaintView(Context context) {
         super(context);
@@ -63,9 +69,7 @@ public class CustomPaintView extends View {
     }
 
     private void generatorBit() {
-        mDrawBit =
-                Bitmap.createBitmap(getMeasuredWidth(), getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-        mPaintCanvas = new Canvas(mDrawBit);
+        mDrawBit = Bitmap.createBitmap(getMeasuredWidth(), getMeasuredHeight(), Bitmap.Config.ARGB_8888);
     }
 
     private void init(Context context) {
@@ -107,8 +111,29 @@ public class CustomPaintView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        mPaintCanvas = canvas;
         if (mDrawBit != null) {
             canvas.drawBitmap(mDrawBit, 0, 0, null);
+        }
+
+        drawPaths(canvas);
+    }
+
+    private void drawPaths(Canvas canvas) {
+        for (PaintPath path : paths) {
+//            if (bounds.contains(path.startX, path.startY) && bounds.contains(path.stopX, path.stopY)) {
+            mPaint.setColor(path.color);
+            float mx = -1;
+            float my = -1;
+            for (int i = 0; i < path.coordinates.size(); i++) {
+                if (i > 0) {
+                    mPaintCanvas.drawLine(mx, my, path.coordinates.get(i).x, path.coordinates.get(i).y, mPaint);
+                }
+                mx = path.coordinates.get(i).x;
+                my = path.coordinates.get(i).y;
+            }
+//            mPaintCanvas.drawLine(path.startX, path.startY, path.stopX, path.stopY, eraser ? mEraserPaint : mPaint);
+//            }
         }
     }
 
@@ -121,20 +146,21 @@ public class CustomPaintView extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 ret = true;
-                last_x = x;
-                last_y = y;
+                lastX = x;
+                lastY = y;
+                paths.add(new PaintPath(x, y, mColor));
 
                 break;
             case MotionEvent.ACTION_MOVE:
                 ret = true;
-                if (bounds.contains(x, y) && bounds.contains(last_x, last_y)) {
-                    mPaintCanvas.drawLine(last_x, last_y, x, y, eraser ? mEraserPaint : mPaint);
+                if (bounds.contains(x, y) && bounds.contains(lastX, lastY)) {
+                    mPaintCanvas.drawLine(lastX, lastY, x, y, eraser ? mEraserPaint : mPaint);
                 }
-                last_x = x;
-                last_y = y;
+                lastX = x;
+                lastY = y;
 
+                paths.get(paths.size() - 1).coordinates.add(new PaintPath.Coordinate(x, y));
                 this.postInvalidate();
-
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
@@ -171,5 +197,12 @@ public class CustomPaintView extends View {
 
     public void setBounds(RectF bitmapRect) {
         this.bounds = bitmapRect;
+    }
+
+    public void undo() {
+        if (!paths.isEmpty()) {
+            paths.remove(paths.size() - 1);
+            invalidate();
+        }
     }
 }

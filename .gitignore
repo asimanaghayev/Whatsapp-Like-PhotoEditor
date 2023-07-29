@@ -12,6 +12,7 @@
 .idea/codeStyles
 .idea/checkstyle-idea.xml
 .idea/compiler.xml
+.idea/assetWizardSettings.xml
 .DS_Store
 /build
 /captures
