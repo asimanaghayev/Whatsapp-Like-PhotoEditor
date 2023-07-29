@@ -46,6 +46,8 @@ public class PhotoEditorFragment extends BaseFragment
     ImageView cropButton;
     ImageView stickerButton;
     ImageView addTextButton;
+
+    ImageView undoButton;
     PhotoEditorView photoEditorView;
     ImageView paintButton;
     ImageView deleteButton;
@@ -166,6 +168,7 @@ public class PhotoEditorFragment extends BaseFragment
         cropButton = view.findViewById(R.id.crop_btn);
         stickerButton = view.findViewById(R.id.stickers_btn);
         addTextButton = view.findViewById(R.id.add_text_btn);
+        undoButton = view.findViewById(R.id.undo_btn);
         deleteButton = view.findViewById(R.id.delete_view);
         photoEditorView = view.findViewById(R.id.photo_editor_view);
         paintButton = view.findViewById(R.id.paint_btn);
@@ -222,6 +225,7 @@ public class PhotoEditorFragment extends BaseFragment
             stickerButton.setOnClickListener(this);
             addTextButton.setOnClickListener(this);
             paintButton.setOnClickListener(this);
+            undoButton.setOnClickListener(this);
             doneBtn.setOnClickListener(this);
             view.findViewById(R.id.back_iv).setOnClickListener(this);
 
@@ -299,6 +303,8 @@ public class PhotoEditorFragment extends BaseFragment
             setMode(MODE_ADD_TEXT);
         } else if (id == R.id.paint_btn) {
             setMode(MODE_PAINT);
+        } else if (id == R.id.undo_btn) {
+            photoEditorView.undo();
         } else if (id == R.id.back_iv) {
             getActivity().onBackPressed();
         } else if (id == R.id.done_btn) {
@@ -346,10 +352,12 @@ public class PhotoEditorFragment extends BaseFragment
             paintButton.setBackground(
                     Utility.tintDrawable(getContext(), R.drawable.circle, photoEditorView.getColor()));
             photoEditorView.showPaintView();
+            undoButton.setVisibility(View.VISIBLE);
             //paintEditView.setVisibility(View.VISIBLE);
         } else {
             paintButton.setBackground(null);
             photoEditorView.hidePaintView();
+            undoButton.setVisibility(View.GONE);
             //photoEditorView.enableTouch(true);
             //paintEditView.setVisibility(View.GONE);
         }

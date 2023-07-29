@@ -40,16 +40,27 @@
 
         <ImageView
             android:id="@+id/back_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/ic.default"
+            android:layout_height="@dimen/ic.default"
             android:padding="10dp"
             android:src="@drawable/ic_cam_back" />
 
         <ImageView
+            android:id="@+id/undo_btn"
+            android:layout_width="@dimen/ic.default"
+            android:layout_height="@dimen/ic.default"
+            android:layout_marginStart="5dp"
+            android:layout_toStartOf="@+id/crop_btn"
+            android:layout_toLeftOf="@+id/crop_btn"
+            android:padding="8dp"
+            android:src="@drawable/ic_undo"
+            android:visibility="gone" />
+
+        <ImageView
             android:id="@+id/crop_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_width="@dimen/ic.default"
+            android:layout_height="@dimen/ic.default"
+            android:layout_marginStart="5dp"
             android:layout_toStartOf="@+id/stickers_btn"
             android:layout_toLeftOf="@+id/stickers_btn"
             android:padding="8dp"
@@ -57,9 +68,9 @@
 
         <ImageView
             android:id="@+id/stickers_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_width="@dimen/ic.default"
+            android:layout_height="@dimen/ic.default"
+            android:layout_marginStart="5dp"
             android:layout_toStartOf="@+id/add_text_btn"
             android:layout_toLeftOf="@+id/add_text_btn"
             android:padding="8dp"
@@ -67,9 +78,9 @@
 
         <ImageView
             android:id="@+id/add_text_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_width="@dimen/ic.default"
+            android:layout_height="@dimen/ic.default"
+            android:layout_marginStart="5dp"
             android:layout_toStartOf="@+id/paint_btn"
             android:layout_toLeftOf="@+id/paint_btn"
             android:padding="8dp"
@@ -77,11 +88,11 @@
 
         <ImageView
             android:id="@+id/paint_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/ic.default"
+            android:layout_height="@dimen/ic.default"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:layout_marginRight="5dp"
             android:padding="8dp"
             android:src="@drawable/ic_cam_draw" />

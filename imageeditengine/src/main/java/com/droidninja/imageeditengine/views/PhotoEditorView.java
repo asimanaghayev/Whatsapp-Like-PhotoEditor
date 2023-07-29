@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class PhotoEditorView extends FrameLayout implements ViewTouchListener,
@@ -74,21 +75,18 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener,
         recyclerView = view.findViewById(R.id.recyclerview);
         inputTextET = view.findViewById(R.id.add_text_et);
         customPaintView = view.findViewById(R.id.paint_view);
-        inputTextET.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if (selectedView != null) {
-                        ((AutofitTextView) selectedView).setText(inputTextET.getText());
-                        Utility.hideSoftKeyboard((Activity) getContext());
-                    } else {
-                        createText(inputTextET.getText().toString());
-                        Utility.hideSoftKeyboard((Activity) getContext());
-                    }
-                    inputTextET.setVisibility(INVISIBLE);
+        inputTextET.setOnEditorActionListener((textView, actionId, keyEvent) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (selectedView != null) {
+                    ((AutofitTextView) selectedView).setText(inputTextET.getText());
+                    Utility.hideSoftKeyboard((Activity) getContext());
+                } else {
+                    createText(inputTextET.getText().toString());
+                    Utility.hideSoftKeyboard((Activity) getContext());
                 }
-                return false;
+                inputTextET.setVisibility(INVISIBLE);
             }
+            return false;
         });
         keyboardHeightProvider = new KeyboardHeightProvider((Activity) getContext());
         keyboardHeightProvider.setKeyboardHeightObserver(this);
@@ -96,21 +94,11 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener,
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 3);
         recyclerView.setLayoutManager(gridLayoutManager);
 
-        StickerListAdapter stickerAdapter = new StickerListAdapter(new ArrayList<String>());
+        StickerListAdapter stickerAdapter = new StickerListAdapter(new ArrayList<>());
         recyclerView.setAdapter(stickerAdapter);
 
-        view.post(new Runnable() {
-            @Override
-            public void run() {
-                keyboardHeightProvider.start();
-            }
-        });
-        inputTextET.post(new Runnable() {
-            @Override
-            public void run() {
-                initialY = inputTextET.getY();
-            }
-        });
+        view.post(() -> keyboardHeightProvider.start());
+        inputTextET.post(() -> initialY = inputTextET.getY());
         addView(view);
     }
 
@@ -156,7 +144,7 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener,
             autofitTextView.setTextColor(selectedColor);
         } else {
             View view = getViewChildAt(selectViewIndex);
-            if (view != null && view instanceof AutofitTextView) {
+            if (view instanceof AutofitTextView) {
                 autofitTextView = (AutofitTextView) view;
                 autofitTextView.setTextColor(selectedColor);
             }
@@ -195,15 +183,11 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener,
         autofitTextView.setMaxTextSize(Dimension.SP, 50);
         MultiTouchListener multiTouchListener =
                 new MultiTouchListener(deleteView, container, this.imageView, true, this);
-        multiTouchListener.setOnMultiTouchListener(new MultiTouchListener.OnMultiTouchListener() {
-
-            @Override
-            public void onRemoveViewListener(View removedView) {
-                container.removeView(removedView);
-                inputTextET.setText(null);
-                inputTextET.setVisibility(INVISIBLE);
-                selectedView = null;
-            }
+        multiTouchListener.setOnMultiTouchListener(removedView -> {
+            container.removeView(removedView);
+            inputTextET.setText(null);
+            inputTextET.setVisibility(INVISIBLE);
+            selectedView = null;
         });
         multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
             @Override
@@ -302,7 +286,7 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener,
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -314,13 +298,9 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener,
         stickerImageView.setId(container.getChildCount());
         MultiTouchListener multiTouchListener =
                 new MultiTouchListener(deleteView, container, this.imageView, true, this);
-        multiTouchListener.setOnMultiTouchListener(new MultiTouchListener.OnMultiTouchListener() {
-
-            @Override
-            public void onRemoveViewListener(View removedView) {
-                container.removeView(removedView);
-                selectedView = null;
-            }
+        multiTouchListener.setOnMultiTouchListener(removedView -> {
+            container.removeView(removedView);
+            selectedView = null;
         });
         multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
             @Override
@@ -361,7 +341,7 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener,
 
         private List<String> stickers;
 
-        public StickerListAdapter(ArrayList<String> list) {
+        public StickerListAdapter(List<String> list) {
             stickers = list;
         }
 
@@ -392,8 +372,7 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener,
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             View v = inflater.inflate(R.layout.sticker_view, parent, false);
             // set the view's size, margins, paddings and layout parameters
-            ViewHolder vh = new ViewHolder(v);
-            return vh;
+            return new ViewHolder(v);
         }
 
         @Override
@@ -425,5 +404,9 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener,
             }
             return image;
         }
+    }
+
+    public void undo() {
+        customPaintView.undo();
     }
 }
