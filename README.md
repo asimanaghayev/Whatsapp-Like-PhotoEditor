@@ -1,12 +1,5 @@
 # Whatsapp-Like-PhotoEditor
 It is a library module that tries to mimic the whatsapp photoeditor.
-There are many things on which work needs to be done.
- 
- **TODO**
- * Fix cropping issue (needs to mimic whatsapp on this)
- * Remove ugly code
- * Convert code to kotlin
- * Publish on maven
  
  ![demo](https://github.com/DroidNinja/Whatsapp-Like-PhotoEditor/blob/master/screens/device-2018-05-31-164109.png?raw=true)
    ![demo](https://github.com/DroidNinja/Whatsapp-Like-PhotoEditor/blob/master/screens/device-2018-05-31-163754.png?raw=true)
@@ -15,6 +8,22 @@ There are many things on which work needs to be done.
    ![demo](https://github.com/DroidNinja/Whatsapp-Like-PhotoEditor/blob/master/screens/device-2018-05-31-164501.png?raw=true)
 
 # Usage
+
+##### Gradle
+ 
+```groovy
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+	}
+}
+
+dependencies {   
+  implementation 'com.github.asimanaghayev:Whatsapp-Like-PhotoEditor:Tag'
+}
+```
+
 ```kotlin
  ImageEditor.Builder(this, imagePath)
                 .setStickerAssets("stickers")
